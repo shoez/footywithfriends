@@ -1,0 +1,19 @@
+{
+  "author": "THUD <team@thudgroup.com>",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "node bin/server"
+  },
+  "analyze": false,
+  "name": "footywithfriends",
+  "engines": {
+    "node": "v0.8.x"
+  },
+  "dependencies": {
+    "express": "> 2.4.6",
+    "jinjs": "> 0.0.1",
+    "socket.io-client": "> 0.0.1",
+    "socket.io": "> 0.0.1",
+    "redis-node": "> 0.0.1"
+  }
+}
