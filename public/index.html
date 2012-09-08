@@ -94,7 +94,7 @@
                             </div>
                         </li>
                         <li>
-                            <label for="friend-2">Bob Probert</label>
+                            <label for="friend-2">Gary Lineker</label>
                             <div style="position:absolute; right:0; top:0">
                                 <select name="friend-2" id="friend-2" data-role="slider">
                                     <option value="no">No</option>
@@ -102,11 +102,32 @@
                                 </select>
                             </div>
                         </li>
+                        <li>
+                            <label for="friend-3">Alan Hansen</label>
+                            <div style="position:absolute; right:0; top:0">
+                                <select name="friend-3" id="friend-3" data-role="slider">
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes</option>
+                                </select>
+                            </div>
+                        </li>                        
                     </ul>
                 </form>
             </div>
             <div data-role="footer">
-                <button type="submit">Invite</button>
+                <button type="submit" data-role="button" data-inline="true" data-theme="b">Invite</button>
+            </div>
+        </div>
+
+        <!-- Match view -->
+        <div id="page-match" data-role="page">
+            <div data-role="header">
+                <h1>Match</h1>
+            </div>
+            <div data-role="content"> 
+                
+            <div data-role="footer">
+                <button type="submit" data-role="button" data-inline="true" data-theme="b">Invite</button>
             </div>
         </div>
 
@@ -117,6 +138,9 @@
         <script src="js/main.js"></script>
 
         <script>
+            $(document).bind("mobileinit", function(){
+                $.mobile.touchOverflowEnabled = true;
+            });
             $(document).ready(function() {
                 footy.init();
             });
