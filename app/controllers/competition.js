@@ -1,9 +1,12 @@
 
 var rest = require('restler'),
 	http = require('http'),
+    redis = require('redis-node'),
+    redisClient = redis.createClient(),
 	questions = require('../questions');
 
 
+redisClient.set('quizid', 0);
 
 
 module.exports = function (app, bayeux) {
@@ -46,23 +49,25 @@ module.exports = function (app, bayeux) {
     });
 
 
-    app.get('/competition/:id/event/quiztime', function(req, res){
+    app.get('/competition/:id/event/quiztime/stop', function(req, res){
 		res.end('OK');
-		var id = req.params.id;
-		var qu = questions[Math.floor(Math.random()*questions.total)];
-		console.log(questions.total, qu);
-		bayeux.getClient().publish('/competition/' + id + '/events/quiztime', { timestamp: new Date(), 
-															start: true, 
-															quiz: qu 	
-		});
+		bayeux.getClient().publish('/competition/' + id + '/events/quiztime', { stop: true });
     });
 
     app.get('/competition/:id/event/quiztime', function(req, res){
         res.end('OK');
         var id = req.params.id;
-        var qu = questions[Math.floor(Math.random()*questions.total)];
-        console.log(questions.total, qu);
-        bayeux.getClient().publish('/competition/' + id + '/events/quiztime', { stop: true });
+        redisClient.incr('quizid');
+        redisClient.get('quizid', function(data) {
+            console.log(data);
+            var qu = questions[data];
+            console.log(questions.total, qu);
+            bayeux.getClient().publish('/competition/' + id + '/events/quiztime', { timestamp: new Date(), 
+                                                            start: true, 
+                                                            quiz: qu    
+            });
+
+        });
     });
 
 

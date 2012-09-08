@@ -14,7 +14,6 @@ var bayeux = new faye.NodeAdapter({mount: '/faye', timeout: 45});
 bayeux.listen(8000);
 
 
-
 require('./controllers/competition')(app, bayeux);
 require('./controllers/users')(app, bayeux);
 //require('./controllers')(app, io);
@@ -28,6 +27,7 @@ app.configure(function () {
   app.set('view options', {layout: false});
   app.use(express.static(__dirname + '/public', { maxAge: 3600 }));
   app.use(express.cookieParser());
+  app.enable("jsonp callback");
   app.use(express.session({
       secret: 'secret'
     , key: 'express.sid'
