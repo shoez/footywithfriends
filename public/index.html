@@ -27,14 +27,82 @@
 
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
         <script src="js/vendor/modernizr-2.6.1.min.js"></script>
+        <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>        
     </head>
     <body>
+        <div id="page-welcome" data-role="page">
+            <div data-role="header">
+                <h1>Footy With Friends</h1>
+            </div>
+            <div data-role="content">   
+                <a href="#page-games" data-role="button" data-transition="slide">Start a game</a>
+            </div>
+        </div>
+
+        <div id="page-games" data-role="page">
+            <div data-role="header">
+                <h1>Select a game</h1>
+            </div>
+            <div data-role="content">   
+                <ul data-role="listview">
+                    <li>
+                        <a href="#page-friends">
+                            Man U vs Man City
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#page-friends">
+                            Arsenal vs Tottenham
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#page-friends">
+                            Liverpool vs Everton
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#page-friends">
+                            Birmingham vs Aston Villa
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="page-friends" data-role="page">
+            <div data-role="header">
+                <h1>Select a game</h1>
+            </div>
+            <div data-role="content">   
+                <ul data-role="listview">
+                    <li>
+                        <a href="#page-friends">
+                            Wayne Gretzky
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#page-friends">
+                            Arsenal vs Tottenham
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#page-friends">
+                            Liverpool vs Everton
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#page-friends">
+                            Birmingham vs Aston Villa
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
         <!-- Add your site or application content here -->
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
-        <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-        <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
         <!--script src="js/vendor/zepto.min.js"></script-->
         <script src="js/helper.js"></script>
         <script src="js/plugins.js"></script>
