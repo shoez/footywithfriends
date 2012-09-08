@@ -12,9 +12,9 @@
   "dependencies": {
     "express": "> 2.4.6",
     "jinjs": "> 0.0.1",
-    "socket.io-client": "> 0.0.1",
-    "socket.io": "> 0.0.1",
+    "faye": "> 0.0.1",
     "redis-node": "> 0.0.1",
-    "restler": "> 0.0.1"
+    "restler": "> 0.0.1",
+    "http-status": "> 0.0.1"
   }
 }
