@@ -30,9 +30,12 @@
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
         <script src="js/vendor/modernizr-2.6.1.min.js"></script>
         <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-        <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>        
+        <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script> 
+        <script src="http://localhost:8000/faye/client.js"></script>       
     </head>
     <body>
+
+        <!-- Welcome view -->
         <div id="page-welcome" data-role="page">
             <div data-role="header">
                 <h1>Footy With Friends</h1>
@@ -42,6 +45,7 @@
             </div>
         </div>
 
+        <!-- Games view -->
         <div id="page-games" data-role="page">
             <div data-role="header">
                 <h1>Select a game</h1>
@@ -72,31 +76,34 @@
             </div>
         </div>
 
+        <!-- Friends view -->
         <div id="page-friends" data-role="page">
             <div data-role="header">
                 <h1>Invite your friends</h1>
             </div>
-            <div data-role="content">   
-                <ul data-role="listview">
-                    <li>
-                        <label for="friend-1">Vinnie Jones</label>
-                        <div style="position:absolute; right:0; top:0">
-                            <select name="friend-1" id="friend-1" data-role="slider">
-                                <option value="no">No</option>
-                                <option value="yes">Yes</option>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <label for="friend-2">Bob Probert</label>
-                        <div style="position:absolute; right:0; top:0">
-                            <select name="friend-2" id="friend-2" data-role="slider">
-                                <option value="no">No</option>
-                                <option value="yes">Yes</option>
-                            </select>
-                        </div>
-                    </li>
-                </ul>
+            <div data-role="content"> 
+                <form id="invite-friends">  
+                    <ul data-role="listview">
+                        <li>
+                            <label for="friend-1">Vinnie Jones</label>
+                            <div style="position:absolute; right:0; top:0">
+                                <select name="friend-1" id="friend-1" data-role="slider">
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li>
+                            <label for="friend-2">Bob Probert</label>
+                            <div style="position:absolute; right:0; top:0">
+                                <select name="friend-2" id="friend-2" data-role="slider">
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes</option>
+                                </select>
+                            </div>
+                        </li>
+                    </ul>
+                </form>
             </div>
             <div data-role="footer">
                 <button type="submit">Invite</button>
@@ -107,6 +114,13 @@
         <!--script src="js/vendor/zepto.min.js"></script-->
         <script src="js/helper.js"></script>
         <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                footy.init();
+            });
+        </script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>
