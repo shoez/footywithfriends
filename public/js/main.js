@@ -3,13 +3,11 @@ footy = {
         // Get user
         //this.getUser();
 
-        // Setup submit handler
-        $("#invite-friends").submit(function(e) {
-            e.stopPropagation();
-            alert("invite friends YY");
-            $.mobile.changePage( "#page-match", { transition: "slide"} );
-            return false;
-        });
+        // Invite submit handler
+        $("#form-invite").on("submit", this.submitInvite);
+
+        // Save bet submit handler
+        $("#form-save-bet").on("submit", this.submitBet);
 
         // Setup page handlers
         $( document ).delegate("#page-matches", "pagebeforecreate", function() {
@@ -22,6 +20,18 @@ footy = {
         // Init listeners
         this.setupListeners();
     }
+};
+
+footy.submitInvite = function(e) {
+    e.stopPropagation();
+    $.mobile.changePage( "#page-match", { transition: "slide"} );
+    return false;
+};
+
+footy.submitBet = function(e) {
+    e.stopPropagation();
+    $.mobile.changePage( "#page-match", { transition: "pop"} );
+    return false;
 };
 
 footy.setupListeners = function() {
@@ -42,8 +52,39 @@ footy.setupListeners = function() {
     //client.addExtension(Logger);
 
     client.subscribe('/competition/' + id + '/events/quiztime', function (data) {
-        console.log('Now show the quiz', data);
-        // Show quiz dialog
+        var node = $("#dialog-quiz .question").empty();
+            quiz = data.quiz;
+        if (quiz) {
+            var question = $("<p>" + quiz.question + "</p>").appendTo(node),
+                startTime = $("<input type='hidden'></input>").appendTo(node),
+                fieldset = $("<fieldset></fieldset>").appendTo(node);
+            
+            fieldset.attr("data-role", "controlgroup");
+            startTime.attr({name: "startTime", value: new Date().getTime()});
+
+            if (quiz.type === "multiple") {
+                if (quiz.options.length > 4) {
+                    // Select if more than 4 options
+                } else {
+                    $.each(quiz.options, function(index, value) {
+                        $("<input></input>")
+                            .attr({
+                                id: "r-" + index,
+                                type: "radio",
+                                name: "answer",
+                                value: value
+                            })
+                            .appendTo(fieldset);
+
+                        $("<label></label>")
+                            .html(value)
+                            .attr("for", "r-" + index)
+                            .appendTo(fieldset);
+                    });
+                }
+            }
+        }
+        node.trigger( "create" );
         $.mobile.changePage( "#dialog-quiz", {} );
     });
 
