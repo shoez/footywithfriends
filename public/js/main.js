@@ -28,8 +28,13 @@ footy.submitInvite = function(e) {
     return false;
 };
 
-footy.submitBet = function(e) {
+footy.submitBet = function(e, data) {
     e.stopPropagation();
+    var form = $(e.target);
+        startTime = form.find("input[name='start-time']").val();
+        endTime = new Date().getTime(),
+        duration = (startTime - endTime) / 1000;
+
     $.mobile.changePage( "#page-match", { transition: "pop"} );
     return false;
 };
@@ -56,7 +61,7 @@ footy.setupListeners = function() {
             quiz = data.quiz;
         if (quiz) {
             var question = $("<p>" + quiz.question + "</p>").appendTo(node),
-                startTime = $("<input type='hidden'></input>").appendTo(node),
+                startTime = $("<input name='start-time' type='hidden'></input>").appendTo(node),
                 fieldset = $("<fieldset></fieldset>").appendTo(node);
             
             fieldset.attr("data-role", "controlgroup");
@@ -66,6 +71,7 @@ footy.setupListeners = function() {
                 if (quiz.options.length > 4) {
                     // Select if more than 4 options
                 } else {
+                    //fieldset.attr("data-type", "horizontal");
                     $.each(quiz.options, function(index, value) {
                         $("<input></input>")
                             .attr({
