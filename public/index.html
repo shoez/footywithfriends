@@ -74,31 +74,32 @@
 
         <div id="page-friends" data-role="page">
             <div data-role="header">
-                <h1>Select a game</h1>
+                <h1>Invite your friends</h1>
             </div>
             <div data-role="content">   
                 <ul data-role="listview">
                     <li>
-                        <a href="#page-friends">
-                            Wayne Gretzky
-                        </a>
+                        <label for="friend-1">Vinnie Jones</label>
+                        <div style="position:absolute; right:0; top:0">
+                            <select name="friend-1" id="friend-1" data-role="slider">
+                                <option value="no">No</option>
+                                <option value="yes">Yes</option>
+                            </select>
+                        </div>
                     </li>
                     <li>
-                        <a href="#page-friends">
-                            Arsenal vs Tottenham
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#page-friends">
-                            Liverpool vs Everton
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#page-friends">
-                            Birmingham vs Aston Villa
-                        </a>
+                        <label for="friend-2">Bob Probert</label>
+                        <div style="position:absolute; right:0; top:0">
+                            <select name="friend-2" id="friend-2" data-role="slider">
+                                <option value="no">No</option>
+                                <option value="yes">Yes</option>
+                            </select>
+                        </div>
                     </li>
                 </ul>
+            </div>
+            <div data-role="footer">
+                <button type="submit">Invite</button>
             </div>
         </div>
 
