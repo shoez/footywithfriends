@@ -58,9 +58,9 @@ module.exports = function (app, bayeux) {
         res.end('OK');
         var id = req.params.id;
         redisClient.incr('quizid');
-        redisClient.get('quizid', function(data) {
-            console.log(data);
-            var qu = questions[data];
+        redisClient.get('quizid', function(err, count) {
+            console.log(count);
+            var qu = questions[count];
             console.log(questions.total, qu);
             bayeux.getClient().publish('/competition/' + id + '/events/quiztime', { timestamp: new Date(), 
                                                             start: true, 
@@ -90,17 +90,17 @@ module.exports = function (app, bayeux) {
         var secondsRemaining = 690 - timeTaken; // 1.30 free to answer - 10m in total.
         var potentialScore = Math.floor(question.scoring * Math.pow((Math.log(secondsRemaining) / Math.LN2), 2));
 
-    	redisClient.get("quiz.id."+quizId, function(data) {
+    	redisClient.get('quiz.id.'+quizId, function(err, data) {
     		if (!data.users[uid]) {
     			data.answers.push({user: uid, answer: req.body.answer, time: timestamp, potentialScore: potentialScore});
     			data.users[uid] = true;
-    			redisClient.set("quiz.id."+quizId, data);
+    			redisClient.set('quiz.id.'+quizId, data);
     		}
     	});
 
         bayeux.getClient().publish('/competition/' + req.params.id + '/user/' + uid, {potentialScore: potentialScore});
 
-		res.end('OK');
+		res.json('OK');
     });
 
 
