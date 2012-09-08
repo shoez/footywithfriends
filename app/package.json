@@ -15,6 +15,7 @@
     "faye": "> 0.0.1",
     "redis-node": "> 0.0.1",
     "restler": "> 0.0.1",
-    "http-status": "> 0.0.1"
+    "http-status": "> 0.0.1",
+    "node-uuid": "> 0.0.1"
   }
 }

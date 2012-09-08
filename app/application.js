@@ -16,7 +16,7 @@ bayeux.listen(8000);
 
 
 require('./controllers/competition')(app, bayeux);
-//require('./controllers')(app, io);
+require('./controllers/users')(app, bayeux);
 //require('./controllers')(app, io);
 
 

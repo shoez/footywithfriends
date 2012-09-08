@@ -1,6 +1,10 @@
 
 var rest = require('restler'),
-	http = require('http');
+	http = require('http'),
+	questions = require('../questions');
+
+
+
 
 module.exports = function (app, bayeux) {
 
@@ -15,6 +19,17 @@ module.exports = function (app, bayeux) {
 		res.end('OK');
 		var id = req.params.id;
 		bayeux.getClient().publish('/competition/' + id + '/events/game/stop', { timestamp: new Date(), stop: true });
+        bayeux.getClient().publish('/competition/' + id + '/events/game/results', { 
+                                                                                    timestamp: new Date(), 
+                                                                                    score: {
+                                                                                        manchestercity: 3,
+                                                                                        southampton: 2
+                                                                                    },
+                                                                                    firstgoal: { team: 'manchestercity', by: 'Carlos Tevez', how: 'Right Peg', when: 'first half'},
+                                                                                    fastest: { team: 'southampton', by: 'Steven Davis', how: '67mph', when: 'second half'},
+                                                                                    bookings: { yellow: 4, red: 0 },
+                                                                                    acceleration: { team: 'southampton', by: 'Jay Rodriguez', how: '13mph'}
+        });
     });
 
     app.get('/competition/:id/event/halftime/start', function(req, res){
@@ -34,27 +49,83 @@ module.exports = function (app, bayeux) {
     app.get('/competition/:id/event/quiztime', function(req, res){
 		res.end('OK');
 		var id = req.params.id;
-			bayeux.getClient().publish('/competition/' + id + '/events/quiztime', { timestamp: new Date(), 
-																start: true, 
-																quiz: {
-																	question: 'Number of tackles in next period?',
-																	id: 1,
-																	type: "multiple", // or 'binary'
-																	options: ['0-4', '5-8', '9-12', 'More!']
-																}
-			});
+		var qu = questions[Math.floor(Math.random()*questions.total)];
+		console.log(questions.total, qu);
+		bayeux.getClient().publish('/competition/' + id + '/events/quiztime', { timestamp: new Date(), 
+															start: true, 
+															quiz: qu 	
+		});
+    });
+
+    app.get('/competition/:id/event/quiztime', function(req, res){
+        res.end('OK');
+        var id = req.params.id;
+        var qu = questions[Math.floor(Math.random()*questions.total)];
+        console.log(questions.total, qu);
+        bayeux.getClient().publish('/competition/' + id + '/events/quiztime', { stop: true });
     });
 
 
     /* when answering the quiz question */
-    app.post('/competition/:id/quiz', function(req, res){
+    app.post('/competition/:id', function(req, res){
 		
+		// assume quizId is 1 for the hack
+		var quizId = req.body.quizId;
+    	var uid = req.body.uid;
+        var timeTaken = req.body.timeTaken; //time taken to answer the question - should really be server generated.
+    	/* 	check the user is registered
+    		check the user hasn't already answered
+    		check the quizId exists */
+    	var timestamp = new Date();
+    	/*
+			quiz id: { users: {UUID: true}, answers: [{user: UUID, answer: X}]}
+    	*/
+
+        var question = questions[quizId];
+        var secondsRemaining = 690 - timeTaken; // 1.30 free to answer - 10m in total.
+        var potentialScore = Math.floor(question.scoring * Math.pow((Math.log(secondsRemaining) / Math.LN2), 2));
+
+    	redisClient.get("quiz.id."+quizId, function(data) {
+    		if (!data.users[uid]) {
+    			data.answers.push({user: uid, answer: req.body.answer, time: timestamp, potentialScore: potentialScore});
+    			data.users[uid] = true;
+    			redisClient.set("quiz.id."+quizId, data);
+    		}
+    	});
+
+        bayeux.getClient().publish('/competition/' + req.params.id + '/user/' + uid, {potentialScore: potentialScore});
+
+		res.end('OK');
+    });
+
+
+    /* when answering the quiz question */
+    app.get('/competition/:id/calculate', function(req, res){
+		
+		// assume quizId is 1 for the hack
+		var quizId = req.body.quizId;
+    	var uid = req.body.uid;
+    	/* 	check the user is registered
+    		check the user hasn't already answered
+    		check the quizId exists */
+
+    	/*
+			quiz id: { users: {UUID: true}, answers: [{user: UUID, answer: X}]}
+    	*/
+    	redisClient.get("quiz.id."+quizId, function(data) {
+    		if (!data.users[uid]) {
+    			data.answers.push({user: uid, answer: req.body.answer});
+    			data.users[uid] = true;
+    			redisClient.set("quiz.id."+quizId, data);
+    		}
+    	});
+
+		res.end('OK');
     });
 
 
 
 };
-
 
 
 
