@@ -1,30 +1,16 @@
-var io = require('socket.io'),
-    express = require('express')
-    util = require('util')
-    app = express.createServer()
-    connect = require('express/node_modules/connect')
-    parseCookie = connect.utils.parseCookie
-    MemoryStore = connect.middleware.session.MemoryStore
+var express = require('express'),
+    util = require('util'),
+    app = express(),
+    http = require('http'),
+    server = http.createServer(app),
+    io = require('socket.io').listen(server),
+    connect = require('express/node_modules/connect'),
+    parseCookie = connect.utils.parseCookie,
+    MemoryStore = connect.middleware.session.MemoryStore,
     store;
 
-app.configure(function () {
-  app.set('view engine', 'jinjs');
-  app.set('view options', {layout: false});
-  app.use(express.cookieParser());
-  app.use(express.session({
-      secret: 'secret'
-    , key: 'express.sid'
-    , store: store = new MemoryStore()
-  }));
-});
 
-app.get('/', function (req, res) {
-  res.render('index', {value: req.session.value});
-});
-
-app.listen(8080);
-
-io.listen(app).set('authorization', function (data, accept) {
+io.set('authorization', function (data, accept) {
   if (!data.headers.cookie) 
     return accept('No cookie transmitted.', false);
 
@@ -50,5 +36,38 @@ io.listen(app).set('authorization', function (data, accept) {
       sess.touch().save();
     });
   });
+
+
+  socket.emit('news', { hello: 'world' });
+
 });
+
+
+
+require('./controllers/competition')(app, io);
+//require('./controllers')(app, io);
+//require('./controllers')(app, io);
+
+
+
+
+app.configure(function () {
+  app.set('view engine', 'jinjs');
+  app.set('view options', {layout: false});
+  app.use(express.cookieParser());
+  app.use(express.session({
+      secret: 'secret'
+    , key: 'express.sid'
+    , store: store = new MemoryStore()
+  }));
+});
+
+
+
+
+app.listen(8080);
+
+
+
+
 
