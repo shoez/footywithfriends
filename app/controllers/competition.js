@@ -13,13 +13,13 @@ module.exports = function (app, bayeux) {
 
 
     app.get('/competition/:id/event/game/start', function(req, res){
-		res.end('OK');
+		res.json('OK');
 		var id = req.params.id;
 		bayeux.getClient().publish('/competition/' + id + '/events/game/start', { timestamp: new Date(), start: true });
     });
 
     app.get('/competition/:id/event/game/stop', function(req, res){
-		res.end('OK');
+		res.json('OK');
 		var id = req.params.id;
 		bayeux.getClient().publish('/competition/' + id + '/events/game/stop', { timestamp: new Date(), stop: true });
         bayeux.getClient().publish('/competition/' + id + '/events/game/results', { 
@@ -62,9 +62,10 @@ module.exports = function (app, bayeux) {
             console.log(count);
             var qu = questions[count];
             console.log(questions.total, qu);
-            bayeux.getClient().publish('/competition/' + id + '/events/quiztime', { timestamp: new Date(), 
-                                                            start: true, 
-                                                            quiz: qu    
+            bayeux.getClient().publish('/competition/' + id + '/events/quiztime', { 
+                                                                                timestamp: new Date(), 
+                                                                                start: true, 
+                                                                                quiz: qu    
             });
 
         });
@@ -75,6 +76,7 @@ module.exports = function (app, bayeux) {
     app.post('/competition/:id', function(req, res){
 		
 		// assume quizId is 1 for the hack
+        var competitionId = req.params.id;
 		var quizId = req.body.quizId;
     	var uid = req.body.uid;
         var timeTaken = req.body.timeTaken; //time taken to answer the question - should really be server generated.
@@ -90,7 +92,7 @@ module.exports = function (app, bayeux) {
         var secondsRemaining = 690 - timeTaken; // 1.30 free to answer - 10m in total.
         var potentialScore = Math.floor(question.scoring * Math.pow((Math.log(secondsRemaining) / Math.LN2), 2));
 
-    	redisClient.get('quiz.id.'+quizId, function(err, data) {
+    	redisClient.get('competition.'+competitionId + '.quiz.'+quizId, function(err, data) {
     		if (!data.users[uid]) {
     			data.answers.push({user: uid, answer: req.body.answer, time: timestamp, potentialScore: potentialScore});
     			data.users[uid] = true;

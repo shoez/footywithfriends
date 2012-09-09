@@ -28,6 +28,14 @@ app.configure(function () {
   app.use(express.static(__dirname + '/public', { maxAge: 3600 }));
   app.use(express.cookieParser());
   app.enable('jsonp callback');
+
+  app.all('/*', function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    next();
+  });
+
   app.use(express.session({
       secret: 'secret'
     , key: 'express.sid'
