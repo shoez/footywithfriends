@@ -15,6 +15,9 @@ footy = {
         $( document ).delegate("#page-friends", "pagebeforecreate", function() {
             // Get list of friends
         });
+        $( document ).delegate("#page-match", "pagebeforecreate", function() {
+            // Get match details
+        });
 
         // Get user
         this.getUser();
@@ -31,6 +34,7 @@ footy.getUser = function() {
     }).always(function(resp, status, xhr) {
         if (resp && resp.uuid) {
             self.userId = resp.uuid;
+            //self.matchTimer = window.setInterval(self.updateMatchClock, 5000);
         }
     });
 };
@@ -63,6 +67,14 @@ footy.submitBet = function(e, data) {
         }
     );
     return false;
+};
+
+footy.updateMatchClock = function() {
+    console.log("matchtime");
+    var node = $("#match-time"),
+        time = node.data("time") || 0;
+    time += 1;
+    node.text(time).data("time", time);
 };
 
 footy.setupListeners = function() {
@@ -167,21 +179,25 @@ footy.setupListeners = function() {
       console.log('Will log potential score that can be won', data.potentialScore);
     });
 
-    console.log('subscribe to game start');
     var start = client.subscribe('/competition/' + id + '/events/game/start', function (data) {
-      console.log(data);
+        console.log(data);
+        $("#match-time").text("0").data("time", 0);
+        self.matchTimer = window.setInterval(self.updateMatchClock, 5000);
     });
     start.callback(function() {
-      console.log('Subscription is now active!');
+        console.log('Subscription is now active!');
     });
 
     client.subscribe('/competition/' + id + '/events/game/stop', function (data) {
-      console.log(data);
+        console.log(data);
+        if (self.matchTimer) window.clearInterval(self.matchTimer);
     });
     client.subscribe('/competition/' + id + '/events/halftime/stop', function (data) {
-      console.log(data);
+        console.log(data);
+        self.matchTimer = window.setInterval(self.updateMatchClock, 5000);
     });
     client.subscribe('/competition/' + id + '/events/halftime/start', function (data) {
-      console.log(data);
+        console.log(data);
+        if (self.matchTimer) window.clearInterval(self.matchTimer);
     });
 };
