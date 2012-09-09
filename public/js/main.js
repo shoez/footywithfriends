@@ -26,10 +26,11 @@ footy = {
 
 footy.getUser = function() {
     var self = this;
-    $.ajax(this.SERVER + "/user/register", {dataType: "jsonp"}).always(function(resp, status, xhr) {
-        console.log("resp", resp, status, xhr);
-        if (resp && resp.user) {
-            self.userId = resp.user.uuid;
+    $.ajax(this.SERVER + "/user/register", {
+        dataType: "jsonp"
+    }).always(function(resp, status, xhr) {
+        if (resp && resp.uuid) {
+            self.userId = resp.uuid;
         }
     });
 };
@@ -47,17 +48,17 @@ footy.submitBet = function(e, data) {
         endTime = new Date().getTime(),
         timeTaken = (endTime - startTime) / 1000; /* In seconds */
 
-        console.log("form", form, startTime);
-    $.ajax(form.attr("action"), {
+    var r = $.ajax(form.attr("action"), {
         type: "POST",
         dataType: "json",
+        contentType: 'application/json',
         data: {
             uid: form.find("input[name='uid']").val(),
             quizId: form.find("input[name='quizId']").val(),
             timeTaken: timeTaken
         }
     }).done(
-        function() {
+        function(resp, success, xhr) {
             $.mobile.changePage( "#page-match", { transition: "pop"} );
         }
     );

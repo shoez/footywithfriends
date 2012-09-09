@@ -16,7 +16,7 @@ module.exports = function (app, bayeux) {
     app.get('/user/register', function(req, res){
 		
 		var uid = uuid.v4();
-		res.json({'uuid': uid});
+		res.jsonp({'uuid': uid});
 
 		redisClient.set('user.uuid.'+uid, {score: 0});
 		redisClient.get('users', function(err, data) {
