@@ -42,7 +42,7 @@ footy.getUser = function() {
 
 footy.submitInvite = function(e) {
     e.stopPropagation();
-    $.mobile.changePage( "#page-match", { transition: "slide"} );
+    $.mobile.changePage( "#page-match", {} );
     return false;
 };
 
