@@ -1,8 +1,7 @@
 footy = {
+    SERVER: "http://localhost:8080",
+    FAYESERVER: "http://localhost:8000/faye",
     init: function () {
-        // Get user
-        //this.getUser();
-
         // Invite submit handler
         $("#form-invite").on("submit", this.submitInvite);
 
@@ -17,9 +16,22 @@ footy = {
             // Get list of friends
         });
 
+        // Get user
+        this.getUser();
+
         // Init listeners
         this.setupListeners();
     }
+};
+
+footy.getUser = function() {
+    var self = this;
+    $.ajax(this.SERVER + "/user/register", {dataType: "jsonp"}).always(function(resp, status, xhr) {
+        console.log("resp", resp, status, xhr);
+        if (resp && resp.user) {
+            self.userId = resp.user.uuid;
+        }
+    });
 };
 
 footy.submitInvite = function(e) {
@@ -31,17 +43,31 @@ footy.submitInvite = function(e) {
 footy.submitBet = function(e, data) {
     e.stopPropagation();
     var form = $(e.target);
-        startTime = form.find("input[name='start-time']").val();
+        startTime = form.find("input[name='startTime']").val();
         endTime = new Date().getTime(),
-        duration = (startTime - endTime) / 1000;
+        timeTaken = (endTime - startTime) / 1000; /* In seconds */
 
-    $.mobile.changePage( "#page-match", { transition: "pop"} );
+        console.log("form", form, startTime);
+    $.ajax(form.attr("action"), {
+        type: "POST",
+        dataType: "json",
+        data: {
+            uid: form.find("input[name='uid']").val(),
+            quizId: form.find("input[name='quizId']").val(),
+            timeTaken: timeTaken
+        }
+    }).done(
+        function() {
+            $.mobile.changePage( "#page-match", { transition: "pop"} );
+        }
+    );
     return false;
 };
 
 footy.setupListeners = function() {
+    var self = this;
     var id = 100;
-    var client = new Faye.Client('http://localhost:8000/faye');
+    var client = new Faye.Client(this.FAYESERVER);
 
     var Logger = {
       incoming: function(message, callback) {
@@ -57,19 +83,60 @@ footy.setupListeners = function() {
     //client.addExtension(Logger);
 
     client.subscribe('/competition/' + id + '/events/quiztime', function (data) {
-        var node = $("#dialog-quiz .question").empty();
+        var node = $("#dialog-quiz .question").empty(),
+            form = $("#dialog-quiz form"),
             quiz = data.quiz;
+
+        console.log("data", data);
+
+        // Update action
+        form.attr("action", self.SERVER + "/competition/" + id);
+
         if (quiz) {
             var question = $("<p>" + quiz.question + "</p>").appendTo(node),
-                startTime = $("<input name='start-time' type='hidden'></input>").appendTo(node),
+                startTime = $("<input name='startTime' type='hidden'></input>").appendTo(node),
+                quizId = $("<input name='quizId' type='hidden'></input>").appendTo(node),
+                uid = $("<input name='uid' type='hidden'></input>").appendTo(node),
                 fieldset = $("<fieldset></fieldset>").appendTo(node);
             
             fieldset.attr("data-role", "controlgroup");
-            startTime.attr({name: "startTime", value: new Date().getTime()});
+            
+            // Set values
+            startTime.val(new Date().getTime());
+            quizId.val(id);
+            uid.val(self.userId);
 
-            if (quiz.type === "multiple") {
+            if (quiz.type === "binary") {
+                fieldset.attr("data-type", "horizontal");
+                $.each(quiz.options, function(index, value) {
+                        $("<input></input>")
+                            .attr({
+                                id: "r-" + index,
+                                type: "radio",
+                                name: "answer",
+                                value: value
+                            })
+                            .appendTo(fieldset);
+
+                        $("<label></label>")
+                            .html(value)
+                            .attr("for", "r-" + index)
+                            .appendTo(fieldset);
+                    });
+            }
+            else if (quiz.type === "multiple") {
                 if (quiz.options.length > 4) {
                     // Select if more than 4 options
+                    var select = $("<select data-mini='true'></select>").appendTo(fieldset);
+                    $.each(quiz.options, function(index, value) {
+                        $("<option></option>")
+                            .attr({
+                                id: "r-" + index,
+                                value: value
+                            })
+                            .text(value)
+                            .appendTo(select);
+                    });
                 } else {
                     //fieldset.attr("data-type", "horizontal");
                     $.each(quiz.options, function(index, value) {
