@@ -13,6 +13,15 @@ var express = require('express'),
 var bayeux = new faye.NodeAdapter({mount: '/faye', timeout: 45});
 bayeux.listen(8000);
 
+app.configure(function () {
+  app.set('view engine', 'jinjs');
+  app.set('views', __dirname + '/views');
+  app.set('view options', {layout: false});
+  app.use(express.static(__dirname + '/public', { maxAge: 3600 }));
+  app.use(express.cookieParser());
+  app.use(express.bodyParser());
+  app.enable('jsonp callback');
+});
 
 require('./controllers/competition')(app, bayeux);
 require('./controllers/users')(app, bayeux);
