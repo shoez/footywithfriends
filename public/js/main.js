@@ -1,4 +1,6 @@
 footy = {
+    //SERVER: "http://3tqq.localtunnel.com",
+    //FAYESERVER: "http://52n8.localtunnel.com/faye",
     SERVER: "http://localhost:8080",
     FAYESERVER: "http://localhost:8000/faye",
     TIMERINTERVAL: 5000,
@@ -22,9 +24,6 @@ footy = {
 
         // Get user
         this.getUser();
-
-        // Init listeners
-        this.setupListeners();
     }
 };
 
@@ -35,6 +34,7 @@ footy.getUser = function() {
     }).always(function(resp, status, xhr) {
         if (resp && resp.uuid) {
             self.userId = resp.uuid;
+            self.setupListeners();
             //self.matchTimer = window.setInterval(self.updateMatchClock, self.TIMERINTERVAL);
         }
     });
@@ -49,6 +49,7 @@ footy.submitInvite = function(e) {
 footy.submitBet = function(e, data) {
     e.stopPropagation();
     var form = $(e.target);
+        answer = (form.find("input[name='answer']:checked").length) ? form.find("input[name='answer']:checked") : form.find("*[name='answer']"),
         startTime = form.find("input[name='startTime']").val();
         endTime = new Date().getTime(),
         timeTaken = (endTime - startTime) / 1000; /* In seconds */
@@ -60,11 +61,12 @@ footy.submitBet = function(e, data) {
         data: {
             uid: form.find("input[name='uid']").val(),
             quizId: form.find("input[name='quizId']").val(),
-            timeTaken: timeTaken
+            timeTaken: timeTaken,
+            answer: answer.val()
         }
     }).done(
         function(resp, success, xhr) {
-            $.mobile.changePage( "#page-match", { transition: "pop"} );
+            $.mobile.changePage( "#page-match", {} );
         }
     );
     return false;
@@ -175,7 +177,7 @@ footy.setupListeners = function() {
     });
 
 
-    client.subscribe('/competition/' + id + '/user/USERID', function (data) {
+    client.subscribe('/competition/' + id + '/user/' + this.userId, function (data) {
         console.log('Will log potential score that can be won', data.potentialScore);
         var node = $("#dialog-result .result").empty();
         if (data.win) {
