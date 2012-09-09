@@ -64,7 +64,16 @@ textarea {
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
-
+#page-match .ui-content {
+    text-align: center;
+}
+#match-teams {
+    font-weight:bold;
+}
+#match-time.active {
+    font-size: 1.3em;
+    font-weight: bold;
+}
 
 
 
