@@ -180,12 +180,13 @@ footy.setupListeners = function() {
     client.subscribe('/competition/' + id + '/user/' + this.userId, function (data) {
         console.log('Will log potential score that can be won', data.potentialScore);
         var node = $("#dialog-result .result").empty();
-        if (data.win) {
+        if (data.win === true) {
             $("<p>Congratulations! You won " + data.potentialScore + "</p>").appendTo(node);
-        } else {
+            $.mobile.changePage( "#dialog-result", {} );
+        } else if (data.win === false) {
             $("<p>Sorry! You lost " + data.potentialScore + "</p>").appendTo(node);
+            $.mobile.changePage( "#dialog-result", {} );
         }
-        $.mobile.changePage( "#dialog-result", {} );
     });
 
     var start = client.subscribe('/competition/' + id + '/events/game/start', function (data) {
