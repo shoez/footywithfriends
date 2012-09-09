@@ -64,6 +64,9 @@ textarea {
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
+#page-welcome h1 {
+    text-align: center;
+}
 #page-match .ui-content {
     text-align: center;
 }
