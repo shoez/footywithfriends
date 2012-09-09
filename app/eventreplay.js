@@ -21,11 +21,15 @@ var events = [
 
 for (var i = 0; i < events.length; i++) {
 	setTimeout(function() { 
-		console.log(this);
 		var e = this;
 		var data = '';
 		if (e.payload) {
-			data = querystring.stringify({answers:e.payload});
+			var p = {};
+			for (var i = 0; i < e.payload.length; i++) {
+				p['quizid'+i] = e.payload[i].quizid;
+				p['answer'+i] = e.payload[i].answer;
+			}
+			data = querystring.stringify(p);
 		}
 
 		var options = {

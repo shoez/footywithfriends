@@ -18,8 +18,17 @@ module.exports = function (app, bayeux) {
 		var uid = uuid.v4();
 		res.json({'uuid': uid});
 
-		redisClient.set('user.uuid.'+uid, uid);
+		redisClient.set('user.uuid.'+uid, {score: 0});
+		redisClient.get('users', function(err, data) {
 
+			if (!data) {
+				data = [];
+			}
+
+			data[data.length] = uid;
+
+			redisClient.set('users', data);
+		});
     });
 
 

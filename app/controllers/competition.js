@@ -72,6 +72,67 @@ module.exports = function (app, bayeux) {
     });
 
 
+    /* mnotify the client of a goal */
+    app.get('/competition/:id/event/goal', function(req, res){
+        res.json('OK');
+        bayeux.getClient().publish('/competition/' + id + '/events/goal', { team: res.param.team  });
+    });
+
+
+
+    /* result calculated */
+    app.post('/competition/:id/event/result', function(req, res){
+        var competitionId = req.params.id;
+        //quizid0=1&answer0=1&quizid1=2&answer1=2&quizid2=3&answer2=0
+        var answers = [{id:req.body.quizid0, a:req.body.answer0},{id:req.body.quizid1, a:req.body.answer1},{id:req.body.quizid2, a:req.body.answer2} ];
+
+        for (var i = 0; i < answers.length; i++) {
+            redisClient.get('competition.'+competitionId + '.quiz.'+answers[i].id, function(err, data) {
+                for (var i = 0; i < data.answers.length; i++) {
+                    // if the actual result from answers (http input) matches the users answer,
+                    // give them some score
+                    if (answers[i].a == data.answers[i].answer) {
+                        redisClient.get('user.uuid.'+data.answers[i].user, function(err, userData) {
+                            var score = userData.score;
+                            if (!score) {
+                                score = 0;
+                            }
+                            score += data.answers[i].potentialScore;
+                            redisClient.set('user.uuid.'+data.answers[i].user, {score: score});
+                            bayeux.getClient().publish('/competition/' + competitionId + '/user/' + data.answers[i].user, {
+                                                                                                                            win: true,
+                                                                                                                            earnedScore: data.answers[i].potentialScore,
+                                                                                                                            score: score,
+                                                                                                                            quiz: questions[answers[i].id],
+                                                                                                                            answer: data.answers[i].answer
+
+                            });
+
+                        });
+
+                    } else {
+                        bayeux.getClient().publish('/competition/' + competitionId + '/user/' + data.answers[i].user, {
+                                                                                                                        win: false,
+                                                                                                                        lostScore: data.answers[i].potentialScore,
+                                                                                                                        quiz: questions[answers[i].id],
+                                                                                                                        answer: data.answers[i].answer
+
+                        });
+                    }
+                }
+            });
+        }
+
+        res.end('OK');
+        //bayeux.getClient().publish('/competition/' + id + '/events/goal', { team:  });
+    });
+
+
+
+    app.options('/competition/:id', function(req, res){
+        res.end('OK');
+    })
+
     /* when answering the quiz question */
     app.post('/competition/:id', function(req, res){
 		
