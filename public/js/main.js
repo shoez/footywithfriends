@@ -104,7 +104,7 @@ footy.setupListeners = function() {
             
             // Set values
             startTime.val(new Date().getTime());
-            quizId.val(id);
+            quizId.val(quiz.id);
             uid.val(self.userId);
 
             if (quiz.type === "binary") {
@@ -115,7 +115,7 @@ footy.setupListeners = function() {
                                 id: "r-" + index,
                                 type: "radio",
                                 name: "answer",
-                                value: value
+                                value: index
                             })
                             .appendTo(fieldset);
 
@@ -133,7 +133,7 @@ footy.setupListeners = function() {
                         $("<option></option>")
                             .attr({
                                 id: "r-" + index,
-                                value: value
+                                value: index
                             })
                             .text(value)
                             .appendTo(select);
@@ -146,7 +146,7 @@ footy.setupListeners = function() {
                                 id: "r-" + index,
                                 type: "radio",
                                 name: "answer",
-                                value: value
+                                value: index
                             })
                             .appendTo(fieldset);
 
