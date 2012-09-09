@@ -20,21 +20,20 @@ require('./controllers/users')(app, bayeux);
 
 
 
+var allowCrossdomain  = function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, Content-Type, X-Requested-With');
+};
 
 app.configure(function () {
   app.set('view engine', 'jinjs');
   app.set('views', __dirname + '/views');
   app.set('view options', {layout: false});
-  app.all('/*', function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-    next();
-  });
   app.use(express.static(__dirname + '/public', { maxAge: 3600 }));
   app.use(express.cookieParser());
   app.enable('jsonp callback');
-
+  app.use(allowCrossdomain);
   app.use(express.session({
       secret: 'secret'
     , key: 'express.sid'
