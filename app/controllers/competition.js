@@ -130,12 +130,17 @@ module.exports = function (app, bayeux) {
 
 
     app.options('/competition/:id', function(req, res){
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, Content-Type, X-Requested-With');
         res.end('OK');
     })
 
     /* when answering the quiz question */
     app.post('/competition/:id', function(req, res){
-		
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, Content-Type, X-Requested-With');
 		// assume quizId is 1 for the hack
         var competitionId = req.params.id;
 		var quizId = req.body.quizId;

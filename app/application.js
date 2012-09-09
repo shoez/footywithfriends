@@ -32,6 +32,7 @@ app.configure(function () {
   app.set('view options', {layout: false});
   app.use(express.static(__dirname + '/public', { maxAge: 3600 }));
   app.use(express.cookieParser());
+  app.use(express.bodyParser());
   app.enable('jsonp callback');
   app.use(allowCrossdomain);
   app.use(express.session({
