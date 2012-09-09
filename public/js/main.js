@@ -1,6 +1,7 @@
 footy = {
     SERVER: "http://localhost:8080",
     FAYESERVER: "http://localhost:8000/faye",
+    TIMERINTERVAL: 5000,
     init: function () {
         // Invite submit handler
         $("#form-invite").on("submit", this.submitInvite);
@@ -34,7 +35,7 @@ footy.getUser = function() {
     }).always(function(resp, status, xhr) {
         if (resp && resp.uuid) {
             self.userId = resp.uuid;
-            //self.matchTimer = window.setInterval(self.updateMatchClock, 5000);
+            //self.matchTimer = window.setInterval(self.updateMatchClock, self.TIMERINTERVAL);
         }
     });
 };
@@ -181,8 +182,8 @@ footy.setupListeners = function() {
 
     var start = client.subscribe('/competition/' + id + '/events/game/start', function (data) {
         console.log(data);
-        $("#match-time").text("0").data("time", 0);
-        self.matchTimer = window.setInterval(self.updateMatchClock, 5000);
+        $("#match-time").text("0").data("time", 0).addClass("active");
+        self.matchTimer = window.setInterval(self.updateMatchClock, self.TIMERINTERVAL);
     });
     start.callback(function() {
         console.log('Subscription is now active!');
@@ -190,14 +191,17 @@ footy.setupListeners = function() {
 
     client.subscribe('/competition/' + id + '/events/game/stop', function (data) {
         console.log(data);
+        $("#match-time").text("Match ended").data("time", 90).removeClass("active");
         if (self.matchTimer) window.clearInterval(self.matchTimer);
     });
     client.subscribe('/competition/' + id + '/events/halftime/stop', function (data) {
         console.log(data);
-        self.matchTimer = window.setInterval(self.updateMatchClock, 5000);
+        $("#match-time").text("45").data("time", 45).addClass("active");
+        self.matchTimer = window.setInterval(self.updateMatchClock, self.TIMERINTERVAL);
     });
     client.subscribe('/competition/' + id + '/events/halftime/start', function (data) {
         console.log(data);
+        $("#match-time").text("45").data("time", 45).removeClass("active");
         if (self.matchTimer) window.clearInterval(self.matchTimer);
     });
 };
