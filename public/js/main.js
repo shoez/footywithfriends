@@ -51,7 +51,7 @@ footy.submitBet = function(e, data) {
     var r = $.ajax(form.attr("action"), {
         type: "POST",
         dataType: "json",
-        contentType: 'application/json',
+        //contentType: 'application/json',
         data: {
             uid: form.find("input[name='uid']").val(),
             quizId: form.find("input[name='quizId']").val(),
