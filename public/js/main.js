@@ -71,7 +71,6 @@ footy.submitBet = function(e, data) {
 };
 
 footy.updateMatchClock = function() {
-    console.log("matchtime");
     var node = $("#match-time"),
         time = node.data("time") || 0;
     time += 1;
@@ -177,7 +176,14 @@ footy.setupListeners = function() {
 
 
     client.subscribe('/competition/' + id + '/user/USERID', function (data) {
-      console.log('Will log potential score that can be won', data.potentialScore);
+        console.log('Will log potential score that can be won', data.potentialScore);
+        var node = $("#dialog-result .result").empty();
+        if (data.win) {
+            $("<p>Congratulations! You won " + data.potentialScore + "</p>").appendTo(node);
+        } else {
+            $("<p>Sorry! You lost " + data.potentialScore + "</p>").appendTo(node);
+        }
+        $.mobile.changePage( "#dialog-result", {} );
     });
 
     var start = client.subscribe('/competition/' + id + '/events/game/start', function (data) {
