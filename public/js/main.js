@@ -94,6 +94,11 @@ footy.setupListeners = function() {
         $.mobile.changePage( "#dialog-quiz", {} );
     });
 
+
+    client.subscribe('/competition/' + id + '/user/USERID', function (data) {
+      console.log('Will log potential score that can be won', data.potentialScore);
+    });
+
     console.log('subscribe to game start');
     var start = client.subscribe('/competition/' + id + '/events/game/start', function (data) {
       console.log(data);
